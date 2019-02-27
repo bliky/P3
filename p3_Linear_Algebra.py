@@ -231,7 +231,7 @@ plt.plot(vector_of_scalars[0], vector_of_scalars[1], 'ro')
 
 # 1.2.1 TODO
 A = np.array([[21, 7], [15, 42], [9, 6]])
-B = np.array([4, 33])
+B = np.array([[4], [33]])
 
 A_t = A.T
 B_t = B.T
@@ -270,8 +270,8 @@ print(AB_t, '\nequals to\n', B_t_mul_A_t)
 
 # 1.2.2 TODO
 A = np.array([[9, 3], [8, 4], [7, 6]])
-B = np.array([5, 2])
-C = np.array([5, 7])
+B = np.array([[5], [2]])
+C = np.array([[5], [7]])
 
 B_plus_C = B + C
 
@@ -402,7 +402,7 @@ mul_m
 # \end{bmatrix}
 # $$
 
-# In[25]:
+# In[8]:
 
 
 # 3 TODO
@@ -453,7 +453,7 @@ np.array([1, 2, 3, 4, 5]).astype(float)
 # ### 4.1、计算向量的范数
 # 编写一个函数来计算一下向量的各种范数。
 
-# In[33]:
+# In[9]:
 
 
 # TODO 实现这里向量范数计算的函数，要求可以计算p = 0,1,2,3 ... 无穷 情况下的范数
@@ -485,7 +485,7 @@ def calc_Norm(x, p = 2, infty = False):
     return np.power(np.power(x_abs, p).sum(), 1/p)
 
 
-# In[34]:
+# In[10]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_Norm')
@@ -498,7 +498,7 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
 # 
 # 我们这里继续来计算一下F范数
 
-# In[35]:
+# In[11]:
 
 
 # TODO 实现这里矩阵Frobenius范数计算的函数
@@ -518,7 +518,7 @@ def calc_Frobenius_Norm(A):
     return np.power(np.power(A, 2).sum(), 0.5)
 
 
-# In[36]:
+# In[12]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_Frobenius_Norm')
@@ -535,7 +535,7 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
 # 
 # 计算矩阵的条件数
 
-# In[37]:
+# In[13]:
 
 
 """ 计算矩阵的条件数
@@ -550,7 +550,7 @@ def calc_Condition_Number(A):
     return calc_Frobenius_Norm(A) * calc_Frobenius_Norm(np.linalg.inv(A))
 
 
-# In[38]:
+# In[14]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_Condition_Number')
@@ -588,7 +588,7 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
 # 
 # c. 计算完成之后，比较condition number大小与线性系统稳定性之间的关系，并且给出规律性的总结；
 
-# In[52]:
+# In[15]:
 
 
 A = np.mat('1 2; 3 4')
@@ -672,7 +672,7 @@ print(s4)
 # 
 # ### 5.1、使用numpy去计算任意矩阵的奇异值分解：
 
-# In[53]:
+# In[16]:
 
 
 """ 计算任意矩阵的奇异值分解
@@ -689,13 +689,13 @@ def calc_svd(A):
     return np.linalg.svd(A)
 
 
-# In[54]:
+# In[17]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_svd')
 
 
-# In[80]:
+# In[18]:
 
 
 udv = calc_svd(np.array([[1, 2, 3], [4, 5, 6]]))
@@ -705,7 +705,7 @@ print(udv)
 
 # ### (选做) 5.2、利用奇异值分解对矩阵进行降维
 
-# In[83]:
+# In[19]:
 
 
 # TODO 利用SVD进行对于矩阵进行降维
@@ -725,14 +725,11 @@ print(udv)
     
 """
 def calc_svd_decompostion(A, topk = 2):
-    UDV = calc_svd(A)
-    Uk = np.take(UDV[0], range(topk), axis=1)
-    Dk = np.take(UDV[1], range(topk), axis=1)
-    Vk = np.take(UDV[2], range(topk), axis=0)
-    return np.matmul(np.matmul(Uk, Dk), Vk)
+    u,d,vt = calc_svd(A)
+    return np.dot(u[:, :topk], np.diag(d[:topk]))
 
 
-# In[84]:
+# In[20]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_svd_decompostion')
@@ -740,7 +737,7 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
 
 # ### (选做) 5.3、利用奇异值分解对矩阵进行降维后重构
 
-# In[19]:
+# In[21]:
 
 
 """ 利用SVD进行对于矩阵进行降维
@@ -757,10 +754,11 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
         
 """
 def calc_svd_reconsitution(A, topk = 2):
-    pass
+    u,d,vt = calc_svd(A)
+    return np.dot(np.dot(u[:, :topk], np.diag(d[:topk])), vt[:topk, :])
 
 
-# In[20]:
+# In[22]:
 
 
 get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test_calc_svd_reconsitution')
@@ -774,7 +772,7 @@ get_ipython().run_line_magic('run', '-i -e test.py LinearRegressionTestCase.test
 #   
 # 这里需要编码求出对于给定的矩阵A 分别在不同的降维幅度下重构后的F范数损失，并且作出损失大小随着降维大小的变化图：
 
-# In[21]:
+# In[23]:
 
 
 ## 不要修改这里！
@@ -786,7 +784,7 @@ A = load_boston()['data']  # 载入boston house 数据集
 print(A.shape)
 
 
-# In[22]:
+# In[24]:
 
 
 loss_hist = []
@@ -794,7 +792,8 @@ for topk in range(1,13):
     # 5.4 TODO 
     ### 1.计算相应的SVD topk降维后的重构矩阵，需实现calc_svd_reconsitution
     ### 2.计算对应的F范数损失，并存储loss放入loss_hist列表中
-
+    AK = calc_svd_reconsitution(A, topk)
+    loss_hist.append(calc_Frobenius_Norm(A - AK))
 
 ### 画出F损失随着降维大小的变化图
 ### x坐标为对应的降维大小，y坐标为对应的F损失
@@ -813,7 +812,7 @@ plt.ylabel('F Loss')
 # - 打印出U,D,VT的shape形状，尤其注意观察D的shape
 # - 在U，VT，D变量成功实现的情况下，运行测试程序看效果
 
-# In[119]:
+# In[25]:
 
 
 # 5.5 TODO
@@ -834,7 +833,7 @@ D = UDVT[1]
 VT = UDVT[2]
 
 
-# In[120]:
+# In[26]:
 
 
 #请在U，D，V变量完成的情况下调用此测试程序，不要修改此处
